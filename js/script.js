@@ -5,8 +5,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     // List of blog post filenames in the /posts directory
     const posts = [
-        { filename: "2024-01-15-my-first-post.md" },
-        { filename: "2024-02-10-another-tech-post.md" }
+        { filename: "2024-11-11-Metasploitable2-Port-139-Exploit" }
         // Add additional filenames here as you create new posts
     ];
 
