@@ -3,18 +3,32 @@ document.addEventListener("DOMContentLoaded", async function() {
     const postContent = document.getElementById("post-content");
     const converter = new showdown.Converter();
 
-    // Load post list
-    const posts = await fetchPosts();
+    // List of blog post filenames in the /posts directory
+    const posts = [
+        "2024-11-11-Metasploitable2Port139.md"
+        // Add additional filenames here as you create new posts
+    ];
+
+    // Render the list of posts in the sidebar
     renderPostList(posts);
 
     // Load and display a post when clicked
     async function loadPost(filename) {
-        const response = await fetch(`posts/${filename}`);
-        const markdown = await response.text();
-        const htmlContent = converter.makeHtml(markdown);
-        
-        postContent.innerHTML = htmlContent;
-        postContent.style.display = "block";
+        try {
+            const response = await fetch(`posts/${filename}`);
+            if (!response.ok) {
+                throw new Error("Failed to fetch the post.");
+            }
+            const markdown = await response.text();
+            const htmlContent = converter.makeHtml(markdown);
+            
+            // Display the converted HTML content in the post content area
+            postContent.innerHTML = htmlContent;
+            postContent.style.display = "block";
+        } catch (error) {
+            console.error("Error loading post:", error);
+            postContent.innerHTML = "<p class='text-danger'>Error loading post. Please try again later.</p>";
+        }
     }
 
     function renderPostList(posts) {
@@ -31,17 +45,12 @@ document.addEventListener("DOMContentLoaded", async function() {
         });
     }
 
-    async function fetchPosts() {
-        // Mock file list - GitHub Pages cannot list files in a directory
-        // Add post filenames here manually, or load them dynamically from an API if possible
-        return [
-            "2024-01-15-my-first-post.md",
-            "2024-01-20-another-cool-post.md"
-        ];
-    }
-
     function formatPostTitle(filename) {
-        const title = filename.replace(/-/g, ' ').replace('.md', '');
+        // Formats the filename (e.g., "2024-01-15-my-first-post.md") to a more readable title
+        const title = filename
+            .replace(/-/g, ' ')    // Replace hyphens with spaces
+            .replace(/\d{4}-\d{2}-\d{2}\s*/, '')  // Remove the date prefix
+            .replace('.md', '');   // Remove the file extension
         return title.charAt(0).toUpperCase() + title.slice(1);
     }
 });
