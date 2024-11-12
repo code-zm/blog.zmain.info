@@ -173,3 +173,12 @@ footer {
     margin-bottom: 0.5rem;
 }
 
+.list-group-item {
+    cursor: pointer; /* Makes the cursor appear as a pointer on hover */
+    transition: transform 0.2s ease;
+}
+
+.list-group-item:hover {
+    transform: scale(1.02); /* Optional: Adds a slight zoom effect on hover */
+}
+
