@@ -158,3 +158,18 @@ footer {
     transition: text-shadow 0.05s ease-out;
 }
 
+/* Post Title */
+.post-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
+    color: var(--text-light);
+}
+
+/* Post Date */
+.post-date {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+

@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     // List of blog post filenames in the /posts directory
     const posts = [
-        "2024-11-11-Metasploitable2Port139.md"
+        { filename: "2024-01-15-my-first-post.md" },
+        { filename: "2024-02-10-another-tech-post.md" }
         // Add additional filenames here as you create new posts
     ];
 
@@ -33,25 +34,31 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     function renderPostList(posts) {
         posts.forEach(post => {
-            const postItem = document.createElement("a");
-            postItem.classList.add("list-group-item", "list-group-item-action", "bg-dark-secondary", "text-light", "rounded-4", "shadow-sm", "mb-3");
-            postItem.innerHTML = `<h5>${formatPostTitle(post)}</h5>`;
-            postItem.href = "#";
-            postItem.onclick = (e) => {
-                e.preventDefault();
-                loadPost(post);
-            };
+            const postItem = document.createElement("div");
+            postItem.classList.add("list-group-item", "bg-dark-secondary", "text-light", "rounded-4", "shadow-sm", "mb-3");
+
+            // Set up the HTML structure with title and date
+            postItem.innerHTML = `
+                <h5 class="post-title">${formatPostTitle(post.filename)}</h5>
+                <small class="post-date">${formatPostDate(post.filename)}</small>
+            `;
+
+            // Click event to load the post content
+            postItem.onclick = () => loadPost(post.filename);
             postList.appendChild(postItem);
         });
     }
 
     function formatPostTitle(filename) {
-        // Formats the filename (e.g., "2024-01-15-my-first-post.md") to a more readable title
-        const title = filename
-            .replace(/-/g, ' ')    // Replace hyphens with spaces
-            .replace(/\d{4}-\d{2}-\d{2}\s*/, '')  // Remove the date prefix
-            .replace('.md', '');   // Remove the file extension
+        // Extracts title by removing the date prefix and file extension
+        const title = filename.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace('.md', '').replace(/-/g, ' ');
         return title.charAt(0).toUpperCase() + title.slice(1);
+    }
+
+    function formatPostDate(filename) {
+        // Extracts and formats the date from the filename
+        const dateMatch = filename.match(/^\d{4}-\d{2}-\d{2}/);
+        return dateMatch ? dateMatch[0].replace(/-/g, '/') : '';
     }
 });
 
