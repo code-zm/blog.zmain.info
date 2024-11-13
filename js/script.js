@@ -3,9 +3,12 @@ document.addEventListener("DOMContentLoaded", async function() {
     const postContent = document.getElementById("post-content");
     const converter = new showdown.Converter();
 
+    let openPost = null; // Track the currently open post filename
+
     // List of blog post filenames in the /posts directory
     const posts = [
-        { filename: "2024-11-11-Metasploitable2-Port-139-Exploit.md" }
+        { filename: "2024-11-11-Metasploitable2-Port-139-Exploit.md" },
+        { filename: "2024-11-10-Metasploitable2-Port-21-Exploit.md" }
         // Add additional filenames here as you create new posts
     ];
 
@@ -14,20 +17,30 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     // Load and display a post when clicked
     async function loadPost(filename) {
-        try {
-            const response = await fetch(`posts/${filename}`);
-            if (!response.ok) {
-                throw new Error("Failed to fetch the post.");
+        if (openPost === filename) {
+            // If the same post is clicked again, close it
+            postContent.style.display = "none";
+            postContent.innerHTML = ""; // Clear the content
+            openPost = null; // Reset the open post
+        } else {
+            try {
+                const response = await fetch(`posts/${filename}`);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch the post.");
+                }
+                const markdown = await response.text();
+                
+                // Convert the Markdown to HTML using Showdown
+                const htmlContent = converter.makeHtml(markdown);
+                
+                // Display the converted HTML content in the post content area
+                postContent.innerHTML = htmlContent;
+                postContent.style.display = "block";
+                openPost = filename; // Set the currently open post
+            } catch (error) {
+                console.error("Error loading post:", error);
+                postContent.innerHTML = "<p class='text-danger'>Error loading post. Please try again later.</p>";
             }
-            const markdown = await response.text();
-            const htmlContent = converter.makeHtml(markdown);
-            
-            // Display the converted HTML content in the post content area
-            postContent.innerHTML = htmlContent;
-            postContent.style.display = "block";
-        } catch (error) {
-            console.error("Error loading post:", error);
-            postContent.innerHTML = "<p class='text-danger'>Error loading post. Please try again later.</p>";
         }
     }
 
@@ -42,7 +55,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                 <small class="post-date">${formatPostDate(post.filename)}</small>
             `;
 
-            // Click event to load the post content
+            // Click event to toggle the post content
             postItem.onclick = () => loadPost(post.filename);
             postList.appendChild(postItem);
         });
